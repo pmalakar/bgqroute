@@ -1,0 +1,24 @@
+
+Files and descriptions
+----------------------
+
+libbgqroute.a [Required]
+- library for BG/Q
+
+route.h [Required]  
+route.cxx [Optional]
+- source code
+
+test.cxx [Optional]
+- contains example of using getRoute
+
+
+Steps
+-----
+
+1. Download libbgqroute.a and route.h 
+
+2. In your Makefile or to your compilation command,
+		Add -L<Path to libbgqroute.a> -lbgqroute
+		Add -I<Path to route.h>
+
