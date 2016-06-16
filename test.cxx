@@ -29,6 +29,7 @@ int main (int argc, char **argv) {
 		
 		char path[64];
 		getRoute (source, destination, path);
+		puts(path);
 	}
 
 	MPI_Finalize();

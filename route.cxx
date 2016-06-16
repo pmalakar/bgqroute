@@ -197,7 +197,9 @@ void getRoute(int srcRank, int destRank, char *path) {
 
 	sprintf(buf, "%d", destRank);
 	strcat(path, buf); 
+#ifdef DEBUG
 	printf ("path: %s\n", path);
+#endif
 
 	return;
 			
