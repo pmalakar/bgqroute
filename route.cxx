@@ -187,9 +187,9 @@ void getRoute(int srcRank, int destRank, char *path) {
 #ifdef DEBUG
 			printf ("Route %d to %d Hop %d\n", srcRank, intmdt_rank, hopnum);
 			printf ("%d->%d;\n", hopnum, child, parent);
-			MPIX_Rank2torus (child, childCoords);
-			printf ("Hop #%d: %d (%d %d %d %d %d) -> %d (%d %d %d %d %d)\n", hopnum, child, childCoords[0], childCoords[1], childCoords[2], childCoords[3], childCoords[4], parent, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4]); 
 #endif
+			MPIX_Rank2torus (child, childCoords);
+			printf ("Hop #%d: [%d-%d] %d (%d %d %d %d %d) -> %d (%d %d %d %d %d)\n", hopnum, srcRank, destRank, child, childCoords[0], childCoords[1], childCoords[2], childCoords[3], childCoords[4], parent, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4]); 
 
 			child = parent;
 		}
@@ -197,8 +197,8 @@ void getRoute(int srcRank, int destRank, char *path) {
 
 	sprintf(buf, "%d", destRank);
 	strcat(path, buf); 
-#ifdef DEBUG
 	printf ("path: %s\n", path);
+#ifdef DEBUG
 #endif
 
 	return;
