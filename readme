@@ -1,6 +1,7 @@
-
 Files and descriptions
 ----------------------
+
+readme [this file]
 
 libbgqroute.a [Required]
 - library for BG/Q
@@ -12,6 +13,11 @@ route.cxx [Optional]
 test.cxx [Optional]
 - contains example of using getRoute
 
+[Test code files]
+multiroutes.cxx
+profile-minimd-512c1.txt
+Makefile.multiroutes
+
 
 Steps
 -----
@@ -21,4 +27,14 @@ Steps
 2. In your Makefile or to your compilation command,
 		Add -L<Path to libbgqroute.a> -lbgqroute
 		Add -I<Path to route.h>
+	
+3. Example code to find routes from source-destination pairs in a text file.
+
+
+Example code
+------------
+
+multiroutes.cxx [Requires source-destination data file as input]
+make -f Makefile.multiroutes
+qsub -A <Project Name> -n 512 --mode c1 -t 00:15:00 -O minimd-512R1 ./multiroutes profile-minimd-512c1.txt
 
