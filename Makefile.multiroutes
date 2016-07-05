@@ -1,0 +1,25 @@
+CC=mpixlc
+CXX=mpixlcxx
+
+CFLAGS=-O3 -g
+LIBS=-L./ -lbgqroute 
+#-L/soft/perftools/hpctw/lib -lmpihpm -L/bgsys/drivers/ppcfloor/bgpm/lib -lbgpm -lrt -lstdc++
+
+SRCS = multiroutes.cxx 
+
+OBJS = 	$(SRCS:.cxx=.o)
+
+TARGET = multiroutes
+
+all:    $(TARGET)
+		@echo Compilation done.
+
+%.o:%.cxx
+		$(CXX) $(CFLAGS) $(LIBS) -c $< -o $@
+
+$(TARGET): $(OBJS) 
+		$(CXX) $(CFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
+
+clean:
+		$(RM) *.o *~ $(MAIN)
+
