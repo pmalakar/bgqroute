@@ -175,10 +175,10 @@ void getRoute(int srcRank, int destRank, char *path) {
 			parent = intmdt_rank;
 
 #ifdef DEBUG
-			printf ("Enroute %d (%d %d %d %d %d) to %d (%d %d %d %d %d) Hop %d: in dimension %d Child %d to Parent %d (%d %d %d %d %d)\n", \
-			srcRank, hw.Coords[0], hw.Coords[1], hw.Coords[2], hw.Coords[3], hw.Coords[4], \
-			destRank, destCoords[0], destCoords[1], destCoords[2], destCoords[3], destCoords[4], \
-			hopnum, dimID, child, intmdt_rank, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4]);
+			printf ("Enroute %d (%d %d %d %d %d %d) to %d (%d %d %d %d %d %d) Hop %d: in dimension %d Child %d to Parent %d (%d %d %d %d %d %d)\n", \
+			srcRank, hw.Coords[0], hw.Coords[1], hw.Coords[2], hw.Coords[3], hw.Coords[4], hw.Coords[5], \
+			destRank, destCoords[0], destCoords[1], destCoords[2], destCoords[3], destCoords[4], destCoords[5], \
+			hopnum, dimID, child, intmdt_rank, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4], intmdtCoords[5]);
 #endif
 
 			sprintf(buf, "%d ", child);
@@ -189,7 +189,7 @@ void getRoute(int srcRank, int destRank, char *path) {
 			printf ("%d->%d;\n", hopnum, child, parent);
 #endif
 			MPIX_Rank2torus (child, childCoords);
-			printf ("Hop #%d: [%d-%d] %d (%d %d %d %d %d) -> %d (%d %d %d %d %d)\n", hopnum, srcRank, destRank, child, childCoords[0], childCoords[1], childCoords[2], childCoords[3], childCoords[4], parent, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4]); 
+			printf ("Hop %d: [%d-%d] %d (%d %d %d %d %d %d) -> %d (%d %d %d %d %d %d)\n", hopnum, srcRank, destRank, child, childCoords[0], childCoords[1], childCoords[2], childCoords[3], childCoords[4], childCoords[5], parent, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4], intmdtCoords[5]); 
 
 			child = parent;
 		}
@@ -197,8 +197,8 @@ void getRoute(int srcRank, int destRank, char *path) {
 
 	sprintf(buf, "%d", destRank);
 	strcat(path, buf); 
-	printf ("path: %s\n", path);
 #ifdef DEBUG
+//	printf ("path: %s\n", path);
 #endif
 
 	return;
