@@ -86,8 +86,8 @@ void getRoute(int srcRank, int destRank, char *path) {
 	//local variables
   int i;
 	int unitHop = 1;
-	int childCoords[6], destCoords[6];
-	int intmdtCoords[6];
+  int srcCoords[6], destCoords[6];
+	int childCoords[6], intmdtCoords[6];
 	char buf[6];
 
 	routingOrder = new int[MPIX_TORUS_MAX_DIMS];
@@ -98,6 +98,7 @@ void getRoute(int srcRank, int destRank, char *path) {
   coreID = hw.coreID;	
   nodeID = srcRank/ppn;
 
+	printf("MPIX_TORUS_MAX_DIMS = %d\n", MPIX_TORUS_MAX_DIMS);
 	for (i=0; i<MPIX_TORUS_MAX_DIMS ; i++) {
 		isTorus[i] = hw.isTorus[i];
 		dimSize[i] = hw.Size[i];
@@ -113,17 +114,20 @@ void getRoute(int srcRank, int destRank, char *path) {
 
 #endif
 
+	MPIX_Rank2torus (srcRank, srcCoords);
 	MPIX_Rank2torus (destRank, destCoords);
 
 	//Initialize intermediate nodes in original path to the destination node
 	for (int dim=0; dim < MPIX_TORUS_MAX_DIMS; dim++) 
 		intmdtCoords[dim] = hw.Coords[dim];
 	   
-	intmdtCoords[MPIX_TORUS_MAX_DIMS] = 0;	//T
+	intmdtCoords[MPIX_TORUS_MAX_DIMS] = srcCoords[MPIX_TORUS_MAX_DIMS];	//T
 
 	int hopnum = 0;
 	int hopDiff, intmdt_rank, child, parent;
+
 	child = srcRank;
+
 	for (int dim=0; dim<MPIX_TORUS_MAX_DIMS; dim++) {
 
 		int dimID = routingOrder[dim];
