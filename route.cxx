@@ -98,11 +98,14 @@ void getRoute(int srcRank, int destRank, char *path) {
   coreID = hw.coreID;	
   nodeID = srcRank/ppn;
 
-	printf("MPIX_TORUS_MAX_DIMS = %d\n", MPIX_TORUS_MAX_DIMS);
+//	printf("MPIX_TORUS_MAX_DIMS = %d\n", MPIX_TORUS_MAX_DIMS);
 	for (i=0; i<MPIX_TORUS_MAX_DIMS ; i++) {
 		isTorus[i] = hw.isTorus[i];
 		dimSize[i] = hw.Size[i];
 	}
+
+	MPIX_Rank2torus (srcRank, srcCoords);
+	MPIX_Rank2torus (destRank, destCoords);
 
 #ifdef DEBUG
 
@@ -110,18 +113,15 @@ void getRoute(int srcRank, int destRank, char *path) {
 
 	printf("Torus wraps? %u,%u,%u,%u,%u\n", hw.isTorus[0], hw.isTorus[1], hw.isTorus[2], hw.isTorus[3], hw.isTorus[4]);
 
-	printf("Source rank: %d Node: %d Torus coords = (%u,%u,%u,%u,%u) link ID: %d\n", srcRank, srcRank/ppn, hw.Coords[0], hw.Coords[1], hw.Coords[2], hw.Coords[3], hw.Coords[4], destRank);
+	printf("Source rank: %d Node: %d Torus coords = (%u,%u,%u,%u,%u,%u) link ID: %d\n", srcRank, srcRank/ppn, srcCoords[0], srcCoords[1], srcCoords[2], srcCoords[3], srcCoords[4], srcCoords[5], destRank);
 
 #endif
 
-	MPIX_Rank2torus (srcRank, srcCoords);
-	MPIX_Rank2torus (destRank, destCoords);
-
 	//Initialize intermediate nodes in original path to the destination node
 	for (int dim=0; dim < MPIX_TORUS_MAX_DIMS; dim++) 
-		intmdtCoords[dim] = hw.Coords[dim];
+		intmdtCoords[dim] = srcCoords[dim];
 	   
-	intmdtCoords[MPIX_TORUS_MAX_DIMS] = srcCoords[MPIX_TORUS_MAX_DIMS];	//T
+	intmdtCoords[MPIX_TORUS_MAX_DIMS] = destCoords[MPIX_TORUS_MAX_DIMS];	//T
 
 	int hopnum = 0;
 	int hopDiff, intmdt_rank, child, parent;
@@ -131,7 +131,7 @@ void getRoute(int srcRank, int destRank, char *path) {
 	for (int dim=0; dim<MPIX_TORUS_MAX_DIMS; dim++) {
 
 		int dimID = routingOrder[dim];
-		hopDiff = abs(destCoords[dimID] - hw.Coords[dimID]);
+		hopDiff = abs(destCoords[dimID] - srcCoords[dimID]);
 
 		if (hw.isTorus[dimID] == 1) 
 			hopDiff = min (hopDiff, hw.Size[dimID] - hopDiff) ;
@@ -142,21 +142,21 @@ void getRoute(int srcRank, int destRank, char *path) {
 
 		for(int diff=0; diff<hopDiff ;diff++) {
 			if (hw.isTorus[dimID] == 0) {
-				if(destCoords[dimID] < hw.Coords[dimID]) 
+				if(destCoords[dimID] < srcCoords[dimID]) 
 					intmdtCoords[dimID] -= unitHop;  
 				else intmdtCoords[dimID] += unitHop;
 			}
 			else {		// torus
-				if (abs(destCoords[dimID] - hw.Coords[dimID])*2 > hw.Size[dimID]) 
+				if (abs(destCoords[dimID] - srcCoords[dimID])*2 > hw.Size[dimID]) 
 				{
-					if (destCoords[dimID] > hw.Coords[dimID]) 
+					if (destCoords[dimID] > srcCoords[dimID]) 
 						intmdtCoords[dimID] = ((intmdtCoords[dimID] - unitHop) + hw.Size[dimID]) % hw.Size[dimID];  
 					else 
 						intmdtCoords[dimID] = (intmdtCoords[dimID] + unitHop) % hw.Size[dimID];
 				}
-				else if (abs(destCoords[dimID] - hw.Coords[dimID])*2 < hw.Size[dimID]) 
+				else if (abs(destCoords[dimID] - srcCoords[dimID])*2 < hw.Size[dimID]) 
 				{
-					if (destCoords[dimID] < hw.Coords[dimID]) 
+					if (destCoords[dimID] < srcCoords[dimID]) 
 						intmdtCoords[dimID] = ((intmdtCoords[dimID] - unitHop) + hw.Size[dimID]) % hw.Size[dimID];  
 					else 
 						intmdtCoords[dimID] = (intmdtCoords[dimID] + unitHop) % hw.Size[dimID];
@@ -164,7 +164,7 @@ void getRoute(int srcRank, int destRank, char *path) {
 				else 
 				{
 					//if source coord is even, plus direction
-					if (hw.Coords[dimID]%2 == 0)
+					if (srcCoords[dimID]%2 == 0)
 						intmdtCoords[dimID] = (intmdtCoords[dimID] + unitHop) % hw.Size[dimID]; 		
 					//even source coord: traverse in plus direction  
 					else 
@@ -180,7 +180,7 @@ void getRoute(int srcRank, int destRank, char *path) {
 
 #ifdef DEBUG
 			printf ("Enroute %d (%d %d %d %d %d %d) to %d (%d %d %d %d %d %d) Hop %d: in dimension %d Child %d to Parent %d (%d %d %d %d %d %d)\n", \
-			srcRank, hw.Coords[0], hw.Coords[1], hw.Coords[2], hw.Coords[3], hw.Coords[4], hw.Coords[5], \
+			srcRank, srcCoords[0], srcCoords[1], srcCoords[2], srcCoords[3], srcCoords[4], srcCoords[5], \
 			destRank, destCoords[0], destCoords[1], destCoords[2], destCoords[3], destCoords[4], destCoords[5], \
 			hopnum, dimID, child, intmdt_rank, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4], intmdtCoords[5]);
 #endif
@@ -189,11 +189,14 @@ void getRoute(int srcRank, int destRank, char *path) {
 			strcat(path, buf); 
 
 #ifdef DEBUG
-			printf ("Route %d to %d Hop %d\n", srcRank, intmdt_rank, hopnum);
+			//printf ("Route %d to %d Hop %d\n", srcRank, intmdt_rank, hopnum);
+			printf ("Route %d to %d Hop %d\n", child, parent, hopnum);
 			printf ("%d->%d;\n", hopnum, child, parent);
 #endif
 			MPIX_Rank2torus (child, childCoords);
+
 			printf ("Hop %d: [%d-%d] %d (%d %d %d %d %d %d) -> %d (%d %d %d %d %d %d)\n", hopnum, srcRank, destRank, child, childCoords[0], childCoords[1], childCoords[2], childCoords[3], childCoords[4], childCoords[5], parent, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4], intmdtCoords[5]); 
+			//printf ("Hop %d: [%d-%d] %d (%d %d %d %d %d %d) -> %d (%d %d %d %d %d %d)\n", hopnum, srcRank, destRank, child, childCoords[0], childCoords[1], childCoords[2], childCoords[3], childCoords[4], childCoords[5], parent, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4], intmdtCoords[5]); 
 
 			child = parent;
 		}
@@ -201,9 +204,9 @@ void getRoute(int srcRank, int destRank, char *path) {
 
 	sprintf(buf, "%d", destRank);
 	strcat(path, buf); 
-#ifdef DEBUG
-//	printf ("path: %s\n", path);
-#endif
+//#ifdef DEBUG
+	printf ("path: %s\n", path);
+//#endif
 
 	return;
 			
