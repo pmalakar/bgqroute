@@ -88,7 +88,7 @@ void getRoute(int srcRank, int destRank, char *path) {
 	int unitHop = 1;
   int srcCoords[6], destCoords[6];
 	int childCoords[6], intmdtCoords[6];
-	char buf[6];
+	char buf[64];
 
 	routingOrder = new int[MPIX_TORUS_MAX_DIMS];
 	getRoutingOrder(routingOrder);
@@ -185,8 +185,8 @@ void getRoute(int srcRank, int destRank, char *path) {
 			hopnum, dimID, child, intmdt_rank, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4], intmdtCoords[5]);
 #endif
 
-			sprintf(buf, "%d ", child);
-			strcat(path, buf); 
+	//		sprintf(buf, "%d ", child);
+//			strcat(path, buf); 
 
 #ifdef DEBUG
 			//printf ("Route %d to %d Hop %d\n", srcRank, intmdt_rank, hopnum);
@@ -196,16 +196,17 @@ void getRoute(int srcRank, int destRank, char *path) {
 			MPIX_Rank2torus (child, childCoords);
 
 			printf ("Hop %d: [%d-%d] %d (%d %d %d %d %d %d) -> %d (%d %d %d %d %d %d)\n", hopnum, srcRank, destRank, child, childCoords[0], childCoords[1], childCoords[2], childCoords[3], childCoords[4], childCoords[5], parent, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4], intmdtCoords[5]); 
-			//printf ("Hop %d: [%d-%d] %d (%d %d %d %d %d %d) -> %d (%d %d %d %d %d %d)\n", hopnum, srcRank, destRank, child, childCoords[0], childCoords[1], childCoords[2], childCoords[3], childCoords[4], childCoords[5], parent, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4], intmdtCoords[5]); 
 
 			child = parent;
 		}
 	}   
 
-	sprintf(buf, "%d", destRank);
-	strcat(path, buf); 
+//	sprintf(buf, "%d", destRank);
+//	strcat(path, buf); 
+
+
 //#ifdef DEBUG
-	printf ("path: %s\n", path);
+//	printf ("path: %s\n", path);
 //#endif
 
 	return;

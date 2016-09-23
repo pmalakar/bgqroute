@@ -27,17 +27,21 @@ int main (int argc, char **argv) {
   while(fscanf(fp, "%d %d", &source, &destination) > 0)
 		if (myrank == source)
 		{
-			//printf ("Route from %d - %d\n", source, destination);
-			puts("************\n");
+			printf ("Route from %d - %d\n", source, destination);
+			//puts("************\n");
 		
-			char path[64];
+			char path[512];
+			path[0] = '\0';
+
+			puts(path);			
+
 			getRoute (source, destination, path);
 			printf("Path from %d - %d : %s\n", source, destination, path);
 	
-			puts("************\n");
+			//puts("************\n");
 			fflush(stdout);
-			MPI_Barrier(MPI_COMM_WORLD);
 		}
+			//MPI_Barrier(MPI_COMM_WORLD);
 
 	fclose(fp);
 
