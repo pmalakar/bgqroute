@@ -185,8 +185,8 @@ void getRoute(int srcRank, int destRank, char *path) {
 			hopnum, dimID, child, intmdt_rank, intmdtCoords[0], intmdtCoords[1], intmdtCoords[2], intmdtCoords[3], intmdtCoords[4], intmdtCoords[5]);
 #endif
 
-	//		sprintf(buf, "%d ", child);
-//			strcat(path, buf); 
+			sprintf(buf, "%d ", child);
+			strcat(path, buf); 
 
 #ifdef DEBUG
 			//printf ("Route %d to %d Hop %d\n", srcRank, intmdt_rank, hopnum);
@@ -201,8 +201,8 @@ void getRoute(int srcRank, int destRank, char *path) {
 		}
 	}   
 
-//	sprintf(buf, "%d", destRank);
-//	strcat(path, buf); 
+	sprintf(buf, "%d", destRank);
+	strcat(path, buf); 
 
 
 //#ifdef DEBUG

@@ -41,7 +41,6 @@ int main (int argc, char **argv) {
 			//puts("************\n");
 			fflush(stdout);
 		}
-			//MPI_Barrier(MPI_COMM_WORLD);
 
 	fclose(fp);
 
